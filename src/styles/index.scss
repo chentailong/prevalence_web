@@ -62,4 +62,28 @@ div:focus {
 // main-container global css
 .app-container {
   padding: 20px;
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  margin: 30px;
+  border-radius: 4px;
+  min-height: 500px;
+}
+
+.icon-cart {
+  font-size: 30px;
+  color: red;
+}
+
+.my-cart {
+  font-size: 30px;
+  margin-left: 10px;
+  font-family: 宋体, serif;
+}
+
+.hint {
+  font-size: 10px;
+  margin-left: 10px;
+  color: gray;
+  font-family: 新宋体, serif;
 }

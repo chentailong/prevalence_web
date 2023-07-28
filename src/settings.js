@@ -1,16 +1,14 @@
 module.exports = {
 
-  title: 'Vue Admin Template',
+  title: '社区疫情防控管理系统',
 
   /**
-   * @type {boolean} true | false
-   * @description Whether fix the header
+   * 固定头部
    */
   fixedHeader: false,
 
   /**
-   * @type {boolean} true | false
-   * @description Whether show the logo in sidebar
+   * 启用logo
    */
-  sidebarLogo: false
+  sidebarLogo: true
 }

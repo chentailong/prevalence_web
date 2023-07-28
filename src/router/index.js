@@ -3,186 +3,260 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-/* Layout */
 import Layout from '@/layout'
 
-/**
- * Note: sub-menu only appear when route children.length >= 1
- * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
- *
- * hidden: true                   if set true, item will not show in the sidebar(default is false)
- * alwaysShow: true               if set true, will always show the root menu
- *                                if not set alwaysShow, when item has more than one children route,
- *                                it will becomes nested mode, otherwise not show the root menu
- * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
- * name:'router-name'             the name is used by <keep-alive> (must set!!!)
- * meta : {
-    roles: ['admin','editor']    control the page roles (you can set multiple roles)
-    title: 'title'               the name show in sidebar and breadcrumb (recommend set)
-    icon: 'svg-name'/'el-icon-x' the icon show in the sidebar
-    breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)
-    activeMenu: '/example/list'  if set path, the sidebar will highlight the path you set
-  }
- */
 
-/**
- * constantRoutes
- * a base page that does not have permission requirements
- * all roles can be accessed
- */
 export const constantRoutes = [
   {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
   },
-
   {
     path: '/register',
     component: () => import('@/views/register/index'),
     hidden: true
-
   },
-
   {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
   },
-
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/home',
     children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      path: 'home',
+      name: 'Home',
+      component: () => import('@/views/home/index'),
+      meta: {title: '首页', icon: 'el-icon-s-home'}
     }]
   },
+]
 
+export const asyncRoutes = [
   {
-    path: '/example',
+    path: '/shop',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'el-icon-s-help' },
+    redirect: '/shop/shopping',
+    name: 'Shop',
+    meta: {title: '物资购买', icon: 'el-icon-s-goods', roles: ['admin','user']},
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: 'shopping',
+        name: 'Shopping',
+        component: () => import('@/views/shopping/index'),
+        meta: {title: '商品清单', icon: 'el-icon-shopping-bag-2',roles: ['admin','user']}
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
+        path: 'shoppingCart',
+        name: 'ShoppingCart',
+        component: () => import('@/views/shopping/cart'),
+        meta: {title: '购物车', icon: 'el-icon-shopping-cart-2',roles: ['admin','user']}
+      },
       {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
+        path: 'particulars',
+        name: 'Particulars',
+        component: () => import('@/views/shopping/particulars'),
+        meta: {title: '购物清单', icon: 'el-icon-goods',roles: ['admin','user']},
+        hidden: true
+      },
+      {
+        path: 'orders',
+        name: 'Orders',
+        component: () => import('@/views/shopping/order'),
+        meta: {title: '订单列表', icon: 'el-icon-s-operation',roles: ['admin','user']}
+      },
+      {
+        path: 'userOrderDetail',
+        name: 'UserOrderDetail',
+        component: () => import('@/views/shopping/orderDetail'),
+        meta: {title: '订单详情', icon: 'el-icon-goods',roles: ['admin','user']},
+        hidden: true
+      },
+      {
+        path: 'address',
+        name: 'Address',
+        component: () => import('@/views/shopping/addressBook'),
+        meta: {title: '地址管理', icon: 'el-icon-notebook-2',roles: ['admin','user']}
+      },
+    ],
   },
 
   {
-    path: '/nested',
+    path: '/resident',
     component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
+    redirect: '/resident/user',
+    name: 'Resident',
     meta: {
-      title: 'Nested',
-      icon: 'nested'
+      title: '住户模块',
+      icon: 'el-icon-user-solid',
+      roles: ['admin','user']
     },
     children: [
       {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
+        path: 'user',
+        name: 'User',
+        component: () => import('@/views/user/index'),
+        meta: {
+          title: '住户管理',
+          icon: 'el-icon-user',
+          roles: ['admin']
+        }
       },
       {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: 'menu2' }
+        path: 'admin',
+        name: 'Admin',
+        component: () => import('@/views/user/admin'),
+        meta: {
+          title: '管理员信息',
+          icon: 'el-icon-user',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'list',
+        name: 'List',
+        component: () => import('@/views/user/list'),
+        meta: {
+          title: '住户信息编辑',
+          icon: 'el-icon-user',
+          roles: ['admin','user']
+        },
+      }
+    ]
+  },
+
+
+
+
+  {
+    path: '/access',
+    component: Layout,
+    redirect: '/access/visitor',
+    name: 'Access',
+    meta: {title: '出入模块', icon: 'el-icon-s-promotion', roles: ['admin']},
+    children: [
+      {
+        path: 'visitor',
+        name: 'Visitor',
+        component: () => import('@/views/visitor/index'),
+        meta: {title: '访客管理', icon: 'el-icon-tickets', roles: ['admin']}
+      },
+      {
+        path: 'goHone',
+        name: 'GoHone',
+        component: () => import('@/views/goHome/index'),
+        meta: {title: '返乡管理', icon: 'el-icon-house', roles: ['admin']}
       }
     ]
   },
 
   {
-    path: 'external-link',
+    path: '/goods',
     component: Layout,
+    redirect: '/goods/goods',
+    name: 'goods',
+    meta: {title: '物资模块', icon: 'el-icon-s-goods', roles: ['admin']},
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        path: 'goods',
+        name: 'Goods',
+        component: () => import('@/views/goods/index'),
+        meta: {title: '物资管理', icon: 'el-icon-goods', roles: ['admin']}
+      },
+      {
+        path: '/goodsList',
+        name: 'GoodsList',
+        component: () => import('@/views/goods/list'),
+        meta: {title: '添加物资', icon: 'el-icon-goods', roles: ['admin']},
+        hidden: true
+      },
+      {
+        path: 'category',
+        name: 'Category',
+        component: () => import('@/views/category/index'),
+        meta: {title: '分类管理', icon: 'el-icon-s-grid', roles: ['admin']}
+      },
+      {
+        path: 'order',
+        name: 'Order',
+        component: () => import('@/views/order/index'),
+        meta: {title: '订单管理', icon: 'el-icon-s-order', roles: ['admin']}
       }
     ]
   },
 
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  {
+    path: '/notice',
+    component: Layout,
+    redirect: '/notice/index',
+    name: 'Announcement',
+    meta: {title: '公告管理', icon: 'el-icon-message-solid', roles: ['admin']},
+    children: [
+      {
+        path: 'notice',
+        name: 'Notice',
+        component: () => import('@/views/notice/index'),
+        meta: {title: '公告信息管理', icon: 'el-icon-bell', roles: ['admin']}
+      },
+
+      {
+        path: 'noticeList',
+        name: 'NoticeList',
+        component: () => import('@/views/notice/list'),
+        meta: {title: '公告信息发布', icon: 'el-icon-s-open', roles: ['admin']}
+      }
+    ]
+  },
+
+  {
+    path: '/checkIn',
+    component: Layout,
+    redirect: '/checkIn/visitorCheckIn',
+    name: 'CheckIn',
+    meta: {title: '信息登记模块', icon: 'el-icon-s-promotion', roles: ['admin','user','visitor']},
+    children: [
+      {
+        path: 'visitorCheckIn',
+        name: 'VisitorCheckIn',
+        component: () => import('@/views/visitorCheckIn/index'),
+        meta: {title: '访客出入登记', icon: 'el-icon-tickets', roles: ['admin','visitor']}
+      },
+
+      {
+        path: 'goHoneCheckIn',
+        name: 'GoHoneCheckIn',
+        component: () => import('@/views/goHoneCheckIn/index'),
+        meta: {title: '住户返乡登记', icon: 'el-icon-house', roles: ['admin','user']}
+      },
+      {
+        path: 'details',
+        name: 'Details',
+        component: () => import('@/views/notice/details'),
+        meta: {title: '公告详情', icon: 'el-icon-postcard', roles: ['admin','user']},
+        hidden: true
+      },
+    ]
+  },
+
+  {path: '*', redirect: '/404', hidden: true},
+
 ]
 
+
+
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior: () => ({y: 0}),
   routes: constantRoutes
 })
 
 const router = createRouter()
 
-// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
+  router.matcher = newRouter.matcher // 重置路由
 }
 
 export default router

@@ -1,14 +1,15 @@
 <template>
   <div class="register-container">
-    <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="register-form" auto-complete="on" label-position="left">
+    <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="register-form" auto-complete="on"
+             label-position="left">
 
       <div class="title-container">
         <h3 class="title">用户注册</h3>
       </div>
-
+      <!--账号-->
       <el-form-item prop="username">
         <span class="svg-container">
-          <svg-icon icon-class="user" />
+            <i class="el-icon-user-solid"></i>
         </span>
         <el-input
           ref="username"
@@ -20,10 +21,73 @@
           auto-complete="on"
         />
       </el-form-item>
+      <!--真实姓名-->
+      <el-form-item prop="name">
+        <span class="svg-container">
+          <i class="el-icon-user-solid"></i>
+        </span>
+        <el-input
+          ref="name"
+          v-model="registerForm.name"
+          placeholder="真实姓名"
+          name="name"
+          type="text"
+          tabindex="1"
+          auto-complete="on"
+        />
+      </el-form-item>
+      <!--身份证号-->
+      <el-form-item prop="idNumber">
+        <span class="svg-container">
+            <i class="el-icon-user-solid"></i>
+        </span>
+        <el-input
+          ref="idNumber"
+          v-model="registerForm.idNumber"
+          placeholder="身份证号"
+          name="idNumber"
+          type="text"
+          clearable
+          tabindex="1"
+          auto-complete="on"
+        />
+      </el-form-item>
+      <!--手机号-->
+      <el-form-item prop="phone">
+        <span class="svg-container">
+          <i class="el-icon-phone"></i>
+        </span>
+        <el-input
+          ref="phone"
+          v-model="registerForm.phone"
+          placeholder="手机号"
+          name="phone"
+          type="text"
+          clearable
+          tabindex="1"
+          auto-complete="on"
+        />
+      </el-form-item>
+      <!--住址-->
+      <el-form-item prop="address">
+        <span class="svg-container">
+          <i class="el-icon-location"></i>
+        </span>
+        <el-input
+          ref="address"
+          v-model="registerForm.address"
+          placeholder="现住址"
+          name="address"
+          type="text"
+          clearable
+          tabindex="1"
+          auto-complete="on"
+        />
+      </el-form-item>
       <!--密码-->
       <el-form-item prop="password">
         <span class="svg-container">
-          <svg-icon icon-class="password" />
+          <svg-icon icon-class="password"/>
         </span>
         <el-input
           :key="passwordType"
@@ -37,13 +101,12 @@
           @keyup.enter.native="handleRegister"
         />
         <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"/>
         </span>
       </el-form-item>
-<!--    确认密码  -->
       <el-form-item prop="passwords">
         <span class="svg-container">
-          <svg-icon icon-class="password" />
+          <svg-icon icon-class="password"/>
         </span>
         <el-input
           :key="passwordType"
@@ -57,16 +120,18 @@
           @keyup.enter.native="handleRegister"
         />
         <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"/>
         </span>
       </el-form-item>
 
-      <el-radio-group v-model="radio" style="margin-bottom: 20px">
-        <el-radio :label="2">居民</el-radio>
-        <el-radio :label="3">游客</el-radio>
+      <el-radio-group v-model="registerForm.sex" style="margin-bottom: 20px">
+        <el-radio :label="0">男</el-radio>
+        <el-radio :label="1">女</el-radio>
       </el-radio-group>
 
-      <el-button :loading="loading" :disabled="disabled" type="primary" style="width:100%;margin-bottom:20px;" @click.native.prevent="handleRegister">注册</el-button>
+      <el-button :loading="loading" :disabled="disabled" type="primary" style="width:100%;margin-bottom:20px;"
+                 @click.native.prevent="handleRegister">注册
+      </el-button>
 
       <div class="tips">
         <el-button type="text" @click="$router.push('/login')">已有账号？立即登录</el-button>
@@ -78,9 +143,24 @@
 
 <script>
 
+
+import axios from "axios";
+
 export default {
   name: 'Register',
   data() {
+    const validateUserName = (rule, value, callback) => {
+      this.$store.dispatch('user/list', value).then((res) => {
+        if (res.data !== null) {
+          callback(new Error('该用户名已被注册，请重新输入'))
+          this.disabled = true
+        }else {
+          callback()
+          this.disabled = false
+        }
+      }).catch(() => {
+      })
+    }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
         callback(new Error('密码不能少于6位数'))
@@ -90,7 +170,33 @@ export default {
         callback()
       }
     }
-
+    const validatePhone = (rule, value, callback) => {
+      if (value.length < 6) {
+        callback(new Error('请输入正确的手机号'))
+        this.disabled = true
+      } else {
+        this.disabled = false
+        callback()
+      }
+    }
+    const validateIdNumber = (rule, value, callback) => {
+      if (value.length < 18) {
+        callback(new Error('请输入正确的身份证号'))
+        this.disabled = true
+      } else {
+        this.disabled = false
+        callback()
+      }
+    }
+    const validateAddress = (rule, value, callback) => {
+      if (value.length === 0) {
+        callback(new Error('请输入地址'))
+        this.disabled = true
+      } else {
+        this.disabled = false
+        callback()
+      }
+    }
     const validatePasswords = (rule, value, callback) => {
       if (value.length < 6) {
         callback(new Error('密码不能少于6位数'))
@@ -107,23 +213,31 @@ export default {
       registerForm: {
         username: '',
         password: '',
-        passwords: ''
+        passwords: '',
+        sex: 0,
+        idNumber:'',
+        address:'',
+        name:'',
+        phone:'',
       },
+
       registerRules: {
-        username: [{ required: true, trigger: 'blur' }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-        passwords: [{ required: true, trigger: 'blur', validator: validatePasswords }]
+        username: [{required: true, trigger: 'blur', validator: validateUserName}],
+        password: [{required: true, trigger: 'blur', validator: validatePassword}],
+        passwords: [{required: true, trigger: 'blur', validator: validatePasswords}],
+        phone: [{required: true, trigger: 'blur',validator: validatePhone}],
+        idNumber: [{required: true, trigger: 'blur',validator: validateIdNumber}],
+        address: [{required: true, trigger: 'blur',validator: validateAddress}]
       },
       loading: false,
       disabled: false,
       passwordType: 'password',
-      redirect: undefined,
-      radio: 2
+      redirect: undefined
     }
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         this.redirect = route.query && route.query.redirect
       },
       immediate: true
@@ -145,8 +259,8 @@ export default {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.registerForm).then(() => {
-            this.$router.push({ path: this.redirect || 'login' })
+          this.$store.dispatch('user/register', this.registerForm).then(() => {
+            this.$router.push({path: this.redirect || 'login'})
             this.loading = false
           }).catch(() => {
             this.loading = false
@@ -162,11 +276,9 @@ export default {
 </script>
 
 <style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
-$light_gray:#fff;
+$bg: #283443;
+$light_gray: #fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -210,9 +322,9 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
+$light_gray: #eee;
 
 .register-container {
   min-height: 100%;
